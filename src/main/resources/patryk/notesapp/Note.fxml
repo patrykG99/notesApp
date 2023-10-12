@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane onDragDetected="#handleDrag" prefHeight="237.0" prefWidth="186.0" styleClass="toDoNote" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="patryk.notesapp.NoteController">
+   <children>
+      <TextArea layoutY="24.0" prefHeight="213.0" prefWidth="244.0" styleClass="toDoNoteArea" />
+      <Label layoutX="1.0" layoutY="6.0" prefHeight="0.0" prefWidth="243.0" text="Label" />
+   </children>
+</AnchorPane>

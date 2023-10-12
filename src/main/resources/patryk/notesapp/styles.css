@@ -1,6 +1,7 @@
 .tableBox {
-    -fx-border-width: 0 1px 0 0;
+
     -fx-border-color: lightgray;
+    -fx-border-width: 1px 1px 0 0;
 }
 
 
@@ -8,8 +9,27 @@
 }
 .tableLabel{
     -fx-label-padding: 3px;
-    -fx-font-size: 20;
     -fx-alignment: CENTER;
-    -fx-border-width: 0 1px 0 0;
-    -fx-border-color: lightgray;
+
+
+}
+.buttonToDo{
+    -fx-background-color:#42d4f5 ;
+
+}
+
+.sticky-note {
+    -fx-background-color: #FFEB3B;  /* jasny żółty kolor typowy dla sticky notes */
+    -fx-padding: 10px;
+    -fx-border-radius: 5px;
+    -fx-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3); /* cień dla 3D efektu */
+    -fx-font-size: 14px;
+    -fx-text-wrap: wrap;
+}
+.toDoNote {
+    -fx-background-color:#42d4f5 ;
+}
+.toDoNoteArea{
+    -fx-background-color:#42d4f5 ;
+
 }
