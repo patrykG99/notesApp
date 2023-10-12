@@ -1,0 +1,15 @@
+.tableBox {
+    -fx-border-width: 0 1px 0 0;
+    -fx-border-color: lightgray;
+}
+
+
+.mainBox{
+}
+.tableLabel{
+    -fx-label-padding: 3px;
+    -fx-font-size: 20;
+    -fx-alignment: CENTER;
+    -fx-border-width: 0 1px 0 0;
+    -fx-border-color: lightgray;
+}
