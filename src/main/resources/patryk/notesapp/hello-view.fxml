@@ -32,9 +32,18 @@
          <font>
             <Font size="28.0" />
          </font></Label>
-      <VBox fx:id="toDoBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.rowIndex="1" />
-      <VBox fx:id="inProgressBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <VBox prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <VBox fx:id="toDoBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.rowIndex="1">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding></VBox>
+      <VBox fx:id="inProgressBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding></VBox>
+      <VBox fx:id="doneBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="2" GridPane.rowIndex="1">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding></VBox>
       <Button fx:id="addToDo" mnemonicParsing="false" onAction="#addToDoNote" styleClass="buttonToDo" text="Add">
          <opaqueInsets>
             <Insets />

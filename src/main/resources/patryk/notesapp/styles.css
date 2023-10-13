@@ -19,15 +19,20 @@
 }
 
 .sticky-note {
-    -fx-background-color: #FFEB3B;  /* jasny żółty kolor typowy dla sticky notes */
-    -fx-padding: 10px;
-    -fx-border-radius: 5px;
-    -fx-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3); /* cień dla 3D efektu */
-    -fx-font-size: 14px;
-    -fx-text-wrap: wrap;
+
 }
 .toDoNote {
     -fx-background-color:#42d4f5 ;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-alignment: CENTER;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-start-margin: 10px;
+    -fx-translate-y: 0;
+    -fx-transition: -fx-translate-y 1s ease;
+}
+.toDoNote:hover {
+    -fx-translate-y: -5;
 }
 .toDoNoteArea{
     -fx-background-color:#42d4f5 ;

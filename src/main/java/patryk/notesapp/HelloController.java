@@ -3,6 +3,8 @@ package patryk.notesapp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
@@ -28,6 +30,8 @@ public class HelloController {
 
     @FXML
     private VBox toDoBox;
+    @FXML
+    private VBox doneBox;
 
 
 
@@ -36,23 +40,43 @@ public class HelloController {
 
     @FXML
     void addToDoNote(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Note.fxml"));
-            Node note = loader.load();
-            toDoBox.getChildren().add(note);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("New note");
+            dialog.setHeaderText("Insert note:");
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(noteText -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("Note.fxml"));
+                    Node note = loader.load();
+                    NoteController noteController = loader.getController();
+                    noteController.setNoteContent(noteText);
+                    VBox.setMargin(note, new Insets(0,0,10,0));
+                    toDoBox.getChildren().add(note);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+
+
     }
     @FXML
     void initialize() {
         setupDragAndDrop(toDoBox);
         setupDragAndDrop(inProgressBox);
+        setupDragAndDrop(doneBox);
+
+
+
+
     }
 
     private void setupDragAndDrop(VBox box) {
         box.setOnDragDetected(event -> {
+
             Node node = (Node) event.getTarget();
+
             if (node != null && node.getParent().equals(box)) {
                 SnapshotParameters sp = new SnapshotParameters();
                 WritableImage snapshot = node.snapshot(sp, null);
