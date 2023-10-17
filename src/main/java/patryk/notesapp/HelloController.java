@@ -148,7 +148,7 @@ public class HelloController {
         });
         box.setOnDragDropped(event -> {
             Node noteNode = (Node) event.getGestureSource();
-            NoteController noteController = (NoteController) noteNode.getUserData(); // zakładam, że używasz metody setUserData w NoteController, aby przechowywać odwołanie do samego siebie
+            NoteController noteController = (NoteController) noteNode.getUserData();
             Note note = noteController.getNote();
             Button deleteButton = null;
             if(box == toDoBox) {
