@@ -1,6 +1,7 @@
 package patryk.notesapp;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import patryk.notesapp.model.Note;
@@ -10,6 +11,8 @@ public class NoteController {
 
     @FXML
     private Text noteContent;
+
+
 
     @FXML
     void handleDrag(MouseEvent event) {

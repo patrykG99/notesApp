@@ -12,6 +12,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import patryk.notesapp.model.Note;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +28,8 @@ public class HelloController {
 
     private final NoteService noteService = new NoteService();
 
+
+
     @FXML
     private Button addToDo;
     @FXML
@@ -38,10 +41,10 @@ public class HelloController {
 
     @FXML
     void addToDoNote(ActionEvent event) {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("New note");
-            dialog.setHeaderText("Insert note:");
-            Optional<String> result = dialog.showAndWait();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("New note");
+        dialog.setHeaderText("Insert note:");
+        Optional<String> result = dialog.showAndWait();
         result.ifPresent(noteText -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("Note.fxml"));
@@ -52,6 +55,8 @@ public class HelloController {
                 note.setContent(noteText);
                 note.setStatus("TODO");
                 noteController.setNote(note);
+                Button deleteButton = createDeleteButton(noteNode, toDoBox);
+                ((AnchorPane) noteNode).getChildren().add(deleteButton);
                 VBox.setMargin(noteNode, new Insets(0,0,10,0));
                 toDoBox.getChildren().add(noteNode);
                 noteService.save(toDoBox, inProgressBox, doneBox);
@@ -68,22 +73,43 @@ public class HelloController {
             NoteController noteController = loader.getController();
             noteNode.setUserData(noteController);
             noteController.setNote(note);
-            VBox.setMargin(noteNode, new Insets(0,0,10,0));
+
+            Button deleteButton;
             switch (note.getStatus()) {
                 case "TODO":
+                    deleteButton = createDeleteButton(noteNode, toDoBox);
                     toDoBox.getChildren().add(noteNode);
                     break;
                 case "IN_PROGRESS":
+                    deleteButton = createDeleteButton(noteNode, inProgressBox);
                     inProgressBox.getChildren().add(noteNode);
                     break;
                 case "DONE":
+                    deleteButton = createDeleteButton(noteNode, doneBox);
                     doneBox.getChildren().add(noteNode);
                     break;
+                default:
+                    throw new IllegalStateException("Nieznany status notatki: " + note.getStatus());
             }
+            ((AnchorPane) noteNode).getChildren().add(deleteButton);
+
+            VBox.setMargin(noteNode, new Insets(0,0,10,0));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private Button createDeleteButton(Node noteNode, VBox container) {
+        Button deleteButton = new Button("Usuń");
+        deleteButton.setOnAction(e -> {
+            System.out.println("Usuwanie notatki...");
+            container.getChildren().remove(noteNode);
+            noteService.save(toDoBox, inProgressBox, doneBox);
+        });
+        return deleteButton;
+    }
+
+
     @FXML
     void initialize() {
         List<Note> loadedNotes = noteService.loadNotesFromFile("notes.json");
@@ -109,6 +135,8 @@ public class HelloController {
                 db.setDragViewOffsetX(event.getX());
                 db.setDragViewOffsetY(event.getY());
                 db.setContent(content);
+                
+                
                 event.consume();
             }
         });
@@ -122,13 +150,18 @@ public class HelloController {
             Node noteNode = (Node) event.getGestureSource();
             NoteController noteController = (NoteController) noteNode.getUserData(); // zakładam, że używasz metody setUserData w NoteController, aby przechowywać odwołanie do samego siebie
             Note note = noteController.getNote();
+            Button deleteButton = null;
             if(box == toDoBox) {
+                deleteButton = createDeleteButton(noteNode, toDoBox);
                 note.setStatus("TODO");
             } else if(box == inProgressBox) {
+                deleteButton = createDeleteButton(noteNode, inProgressBox);
                 note.setStatus("IN_PROGRESS");
             } else if(box == doneBox) {
+                deleteButton = createDeleteButton(noteNode, doneBox);
                 note.setStatus("DONE");
             }
+            ((AnchorPane) noteNode).getChildren().add(deleteButton);
             VBox sourceBox = (VBox) noteNode.getParent();
             if (!sourceBox.equals(box)) {
                 sourceBox.getChildren().remove(noteNode);
