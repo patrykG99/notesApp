@@ -8,12 +8,15 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import patryk.notesapp.model.Note;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import patryk.notesapp.service.NoteService;
@@ -100,12 +103,20 @@ public class HelloController {
     }
 
     private Button createDeleteButton(Node noteNode, VBox container) {
-        Button deleteButton = new Button("Usuń");
+        Button deleteButton = new Button();
         deleteButton.setOnAction(e -> {
             System.out.println("Usuwanie notatki...");
             container.getChildren().remove(noteNode);
             noteService.save(toDoBox, inProgressBox, doneBox);
         });
+        Image trashImage = new Image(getClass().getResourceAsStream("/trashcan.png"));
+        ImageView trashImageView = new ImageView(trashImage);
+        trashImageView.setFitHeight(20);
+        trashImageView.setFitWidth(20);
+        deleteButton.setGraphic(trashImageView);
+        deleteButton.setStyle("-fx-background-color: #EF5350; -fx-text-fill: white; -fx-border-color: transparent; -fx-border-radius: 5; -fx-background-radius: 5;");
+        deleteButton.setOnMouseEntered(e -> deleteButton.setStyle("-fx-background-color: #00ACC1; -fx-text-fill: white; -fx-border-color: transparent; -fx-border-radius: 5; -fx-background-radius: 5;"));
+        deleteButton.setOnMouseExited(e -> deleteButton.setStyle("-fx-background-color: #00ACC1     ; -fx-text-fill: white; -fx-border-color: transparent; -fx-border-radius: 5; -fx-background-radius: 5;"));
         return deleteButton;
     }
 

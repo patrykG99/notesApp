@@ -14,7 +14,7 @@
 
 }
 .buttonToDo{
-    -fx-background-color:#42d4f5 ;
+    -fx-background-color:#00ACC1 ;
 
 }
 
@@ -22,7 +22,7 @@
 
 }
 .toDoNote {
-    -fx-background-color:#42d4f5 ;
+    -fx-background-color:#E0F7FA ;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
     -fx-alignment: CENTER;
     -fx-background-radius: 10px;
@@ -37,4 +37,9 @@
 .toDoNoteArea{
     -fx-background-color:#42d4f5 ;
 
+}
+
+.remove-button{
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
 }
