@@ -20,36 +20,54 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Label alignment="CENTER" prefHeight="40.0" prefWidth="359.0" styleClass="tableBox" text="To Do" textAlignment="CENTER" wrapText="true">
+      <Label alignment="CENTER" prefHeight="40.0" prefWidth="359.0" styleClass="boxLabel" text="To Do" textAlignment="CENTER" wrapText="true">
          <font>
             <Font size="28.0" />
-         </font></Label>
-      <Label alignment="CENTER" prefHeight="17.0" prefWidth="379.0" styleClass="tableBox" text="In Progress" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1">
+         </font>
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+         </GridPane.margin></Label>
+      <Label alignment="CENTER" prefHeight="17.0" prefWidth="379.0" styleClass="boxLabel" text="In Progress" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1">
          <font>
             <Font size="28.0" />
-         </font></Label>
-      <Label alignment="CENTER" prefHeight="17.0" prefWidth="380.0" styleClass="tableBox" text="Done" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2">
+         </font>
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+         </GridPane.margin></Label>
+      <Label alignment="CENTER" prefHeight="17.0" prefWidth="380.0" styleClass="boxLabel" text="Done" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2">
          <font>
             <Font size="28.0" />
-         </font></Label>
+         </font>
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+         </GridPane.margin></Label>
       <VBox fx:id="toDoBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.rowIndex="1">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding></VBox>
+         </padding>
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+         </GridPane.margin></VBox>
       <VBox fx:id="inProgressBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding></VBox>
+         </padding>
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+         </GridPane.margin></VBox>
       <VBox fx:id="doneBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="2" GridPane.rowIndex="1">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding></VBox>
-      <Button fx:id="addToDo" mnemonicParsing="false" onAction="#addToDoNote" styleClass="buttonToDo" text="Add">
+         </padding>
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+         </GridPane.margin></VBox>
+      <Button fx:id="addToDo" mnemonicParsing="false" onAction="#addToDoNote" styleClass="buttonToDo">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
          <GridPane.margin>
-            <Insets left="5.0" />
+            <Insets left="10.0" top="5.0" />
          </GridPane.margin>
       </Button>
    </children>

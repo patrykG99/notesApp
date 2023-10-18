@@ -14,8 +14,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import patryk.notesapp.model.Note;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -127,6 +126,13 @@ public class HelloController {
         for (Note note : loadedNotes) {
             addNoteToBoard(note);
         }
+        toDoBox.setBorder(new Border(new BorderStroke(Color.web("#34495E"), BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(0, 1, 0, 0))));
+        Image pencilIcon = new Image(getClass().getResourceAsStream("/pencil.png"));
+        ImageView pencilImageView = new ImageView(pencilIcon);
+        pencilImageView.setFitHeight(20);
+        pencilImageView.setFitWidth(20);
+        addToDo.setGraphic(pencilImageView);
+
         setupDragAndDrop(toDoBox);
         setupDragAndDrop(inProgressBox);
         setupDragAndDrop(doneBox);
