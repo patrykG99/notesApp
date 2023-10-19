@@ -12,6 +12,7 @@
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="685.0" prefWidth="1050.0" styleClass="mainBox" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="patryk.notesapp.HelloController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
   </columnConstraints>
@@ -20,49 +21,49 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Label alignment="CENTER" prefHeight="40.0" prefWidth="359.0" styleClass="boxLabel" text="To Do" textAlignment="CENTER" wrapText="true">
+      <Label alignment="CENTER" prefHeight="40.0" prefWidth="359.0" styleClass="boxLabel" text="To Do" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1">
          <font>
             <Font size="28.0" />
          </font>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
          </GridPane.margin></Label>
-      <Label alignment="CENTER" prefHeight="17.0" prefWidth="379.0" styleClass="boxLabel" text="In Progress" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="1">
+      <Label alignment="CENTER" prefHeight="17.0" prefWidth="379.0" styleClass="boxLabel" text="In Progress" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2">
          <font>
             <Font size="28.0" />
          </font>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
          </GridPane.margin></Label>
-      <Label alignment="CENTER" prefHeight="17.0" prefWidth="380.0" styleClass="boxLabel" text="Done" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="2">
+      <Label alignment="CENTER" prefHeight="17.0" prefWidth="380.0" styleClass="boxLabel" text="Done" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="3">
          <font>
             <Font size="28.0" />
          </font>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
          </GridPane.margin></Label>
-      <VBox fx:id="toDoBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.rowIndex="1">
+      <VBox fx:id="toDoBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
          </GridPane.margin></VBox>
-      <VBox fx:id="inProgressBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <VBox fx:id="inProgressBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="2" GridPane.rowIndex="1">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
          </GridPane.margin></VBox>
-      <VBox fx:id="doneBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="2" GridPane.rowIndex="1">
+      <VBox fx:id="doneBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="3" GridPane.rowIndex="1">
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
          </GridPane.margin></VBox>
-      <Button fx:id="addToDo" mnemonicParsing="false" onAction="#addToDoNote" styleClass="buttonToDo">
+      <Button fx:id="addToDo" mnemonicParsing="false" onAction="#addToDoNote" styleClass="buttonToDo" GridPane.columnIndex="1">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
@@ -70,5 +71,10 @@
             <Insets left="10.0" top="5.0" />
          </GridPane.margin>
       </Button>
+      <VBox fx:id="categoryBox" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+         <children>
+            <Button fx:id="categoryAdd" mnemonicParsing="false" onAction="#addCategory" text="Add" />
+         </children>
+      </VBox>
    </children>
 </GridPane>

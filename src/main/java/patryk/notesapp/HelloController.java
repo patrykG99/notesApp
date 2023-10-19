@@ -1,12 +1,14 @@
 package patryk.notesapp;
 import com.fasterxml.jackson.core.type.TypeReference;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,6 +18,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import patryk.notesapp.model.Data;
 import patryk.notesapp.model.Note;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import patryk.notesapp.service.NoteService;
@@ -30,6 +33,8 @@ public class HelloController {
 
     private final NoteService noteService = new NoteService();
 
+    private String category ="default";
+
 
 
     @FXML
@@ -40,6 +45,11 @@ public class HelloController {
     private VBox doneBox;
     @FXML
     private VBox inProgressBox;
+    @FXML
+    private Button categoryAdd;
+
+    @FXML
+    private VBox categoryBox;
 
     @FXML
     void addToDoNote(ActionEvent event) {
@@ -56,17 +66,33 @@ public class HelloController {
                 Note note = new Note();
                 note.setContent(noteText);
                 note.setStatus("TODO");
+                note.setCategory(category);
                 noteController.setNote(note);
                 Button deleteButton = createDeleteButton(noteNode, toDoBox);
                 ((AnchorPane) noteNode).getChildren().add(deleteButton);
                 VBox.setMargin(noteNode, new Insets(0,0,10,0));
                 toDoBox.getChildren().add(noteNode);
-                noteService.save(toDoBox, inProgressBox, doneBox);
+                Data currentData = noteService.readDataFromFile("notes.json");
+                if (currentData == null) {
+                    currentData = new Data(new ArrayList<>(), new ArrayList<>());
+                }
+                noteService.save(toDoBox, inProgressBox, doneBox, categoryBox,currentData);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
     }
+
+    @FXML
+    void addCategory(ActionEvent event) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("New category");
+        dialog.setHeaderText("Insert category name:");
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(this::loadLabel);
+    }
+
+
 
     private void addNoteToBoard(Note note) {
         try {
@@ -104,9 +130,17 @@ public class HelloController {
     private Button createDeleteButton(Node noteNode, VBox container) {
         Button deleteButton = new Button();
         deleteButton.setOnAction(e -> {
+            NoteController noteController = (NoteController) noteNode.getUserData();
+            Note note = noteController.getNote();
             System.out.println("Usuwanie notatki...");
             container.getChildren().remove(noteNode);
-            noteService.save(toDoBox, inProgressBox, doneBox);
+            Data currentData = noteService.readDataFromFile("notes.json");
+            if (currentData == null) {
+                currentData = new Data(new ArrayList<>(), new ArrayList<>());
+            }
+            currentData.getNotes().removeIf(existingNote -> existingNote.equals(note));
+
+            noteService.save(toDoBox, inProgressBox, doneBox, categoryBox,currentData);
         });
         Image trashImage = new Image(getClass().getResourceAsStream("/trashcan.png"));
         ImageView trashImageView = new ImageView(trashImage);
@@ -119,13 +153,43 @@ public class HelloController {
         return deleteButton;
     }
 
+    private void addLabel(String text){
+        loadLabel(text);
+    }
+
+    private void loadLabel(String text) {
+        Label label = new Label(text);
+        label.setOnMouseClicked(e -> {
+            Label clickedLabel = (Label) e.getSource();
+            category = clickedLabel.getText();
+            toDoBox.getChildren().clear();
+            inProgressBox.getChildren().clear();
+            doneBox.getChildren().clear();
+            List<Note> loadedNotes = noteService.readDataFromFile("notes.json").getNotes().stream().filter(x -> x.getCategory().equals(category)).toList();
+            for (Note note : loadedNotes) {
+                addNoteToBoard(note);
+            }
+            System.out.println(category);
+        });
+        categoryBox.getChildren().add(label);
+    }
+
 
     @FXML
     void initialize() {
-        List<Note> loadedNotes = noteService.loadNotesFromFile("notes.json");
-        for (Note note : loadedNotes) {
-            addNoteToBoard(note);
+        List<Note> loadedNotes = noteService.readDataFromFile("notes.json").getNotes().stream().filter(e -> e.getCategory().equals(category)).toList();
+        List<String> labels = noteService.readDataFromFile("notes.json").getLabels();
+        if(!loadedNotes.isEmpty()){
+            for (Note note : loadedNotes) {
+                addNoteToBoard(note);
+            }
         }
+        if(!labels.isEmpty()){
+            for(String label : labels){
+                addLabel(label);
+            }
+        }
+
         toDoBox.setBorder(new Border(new BorderStroke(Color.web("#34495E"), BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(0, 1, 0, 0))));
         Image pencilIcon = new Image(getClass().getResourceAsStream("/pencil.png"));
         ImageView pencilImageView = new ImageView(pencilIcon);
@@ -138,6 +202,7 @@ public class HelloController {
         setupDragAndDrop(doneBox);
     }
     private void setupDragAndDrop(VBox box) {
+
         box.setOnDragDetected(event -> {
             Node node = (Node) event.getTarget();
             if (node != null && node.getParent().equals(box)) {
@@ -152,8 +217,6 @@ public class HelloController {
                 db.setDragViewOffsetX(event.getX());
                 db.setDragViewOffsetY(event.getY());
                 db.setContent(content);
-                
-                
                 event.consume();
             }
         });
@@ -167,6 +230,11 @@ public class HelloController {
             Node noteNode = (Node) event.getGestureSource();
             NoteController noteController = (NoteController) noteNode.getUserData();
             Note note = noteController.getNote();
+            Data currentData = noteService.readDataFromFile("notes.json");
+            if (currentData == null) {
+                currentData = new Data(new ArrayList<>(), new ArrayList<>());
+            }
+            currentData.getNotes().removeIf(existingNote -> existingNote.equals(note));
             Button deleteButton = null;
             if(box == toDoBox) {
                 deleteButton = createDeleteButton(noteNode, toDoBox);
@@ -186,7 +254,7 @@ public class HelloController {
             }
             noteNode.setVisible(true);
             event.setDropCompleted(true);
-            noteService.save(toDoBox,inProgressBox,doneBox);
+            noteService.save(toDoBox, inProgressBox, doneBox, categoryBox,currentData);
             event.consume();
         });
         box.setOnDragDone(event -> {
@@ -196,4 +264,6 @@ public class HelloController {
             }
         });
     }
+
+
 }
