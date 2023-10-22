@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -50,6 +51,8 @@ public class HelloController {
 
     @FXML
     private VBox categoryBox;
+    @FXML
+    private ScrollPane categoryScroll;
 
     @FXML
     void addToDoNote(ActionEvent event) {
@@ -153,11 +156,8 @@ public class HelloController {
         return deleteButton;
     }
 
-    private void addLabel(String text){
-        loadLabel(text);
-    }
-
     private void loadLabel(String text) {
+
         Label label = new Label(text);
         label.setOnMouseClicked(e -> {
             Label clickedLabel = (Label) e.getSource();
@@ -171,6 +171,11 @@ public class HelloController {
             }
             System.out.println(category);
         });
+        label.setMaxWidth(200);
+        label.setMaxHeight(150);
+        label.setMinHeight(100);
+
+        label.getStyleClass().add("category-label");
         categoryBox.getChildren().add(label);
     }
 
@@ -186,7 +191,7 @@ public class HelloController {
         }
         if(!labels.isEmpty()){
             for(String label : labels){
-                addLabel(label);
+                loadLabel(label);
             }
         }
 
@@ -196,6 +201,10 @@ public class HelloController {
         pencilImageView.setFitHeight(20);
         pencilImageView.setFitWidth(20);
         addToDo.setGraphic(pencilImageView);
+
+        categoryScroll.setFitToHeight(true);
+        categoryScroll.setFitToWidth(true);
+
 
         setupDragAndDrop(toDoBox);
         setupDragAndDrop(inProgressBox);

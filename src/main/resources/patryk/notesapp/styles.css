@@ -1,33 +1,53 @@
+@font-face {
+    src: url('/PlaypenSans-VariableFont_wght.ttf');
+}
+
+
+
 .tableBox {
 
-    -fx-border-width: 1px 1px 1px 1px;
-    -fx-border-radius: 10px;
-    -fx-background-color: white;
-    -fx-background-radius: 10px;
+
+    -fx-border-radius: 20px;
+
+    -fx-background-radius: 20px;
+    -fx-background-color: #1d3256;
+    -fx-border-color: #424242;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 3, 3);
+
+
+
 }
 
 
 .mainBox{
-    -fx-background-color: #eeeeee;
+    -fx-background-color: #213255;
+    -fx-font-family: 'Playpen Sans';
+
+
 }
 .boxLabel{
+    -fx-font-size: 20;
+    -fx-font-family: 'Playpen Sans', cursive;
     -fx-label-padding: 3px;
     -fx-alignment: CENTER;
-    -fx-border-width: 1px 1px 1px 1px;
-    -fx-border-radius: 10px;
-    -fx-background-color:#00ACC1 ;
-    -fx-background-radius: 10px;
-}
-.buttonToDo{
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 3, 3);
+    -fx-border-radius: 20px;
+
+    -fx-background-radius: 20px;
+    -fx-background-color: #0da3dd;
+
+;
 
 }
 
-.sticky-note {
-
-}
 .toDoNote {
-    -fx-background-color:#E0F7FA ;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+
+    -fx-background-color:#eae7ef ;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 30, 0.7, 3, 3);
     -fx-alignment: CENTER;
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
@@ -46,4 +66,67 @@
 .remove-button{
     -fx-border-color: transparent;
     -fx-background-color: transparent;
+}
+.category-label{
+    -fx-background-color:#213d6f ;
+    -fx-text-fill: white;
+    -fx-padding: 10px 20px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 3, 3);
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+    -fx-font-family: 'Playpen Sans', cursive;
+
+}
+.categoryBox{
+    -fx-border-radius: 20px;
+
+    -fx-background-radius: 20px;
+    -fx-background-color: #1d3256;
+    -fx-border-color: #424242;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.5, 3, 3);
+
+}
+.scrollPane{
+
+    -fx-background-color: transparent;
+
+
+
+}
+.scrollPane .viewport {
+    -fx-background-color: transparent;
+
+
+}
+.scroll-bar:vertical{
+    -fx-background-color: transparent;
+
+}
+.scroll-bar .thumb {
+    -fx-background-color: #3498DB;
+    -fx-background-radius: 5;
+}
+.scroll-bar:vertical {
+    -fx-pref-width: 12;
+}
+.addCategoryButton{
+    -fx-background-radius: 15;
+    -fx-background-color: linear-gradient(to bottom, #3498DB, #2980B9);
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+
+}
+#addCategoryButton:hover {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
 }
