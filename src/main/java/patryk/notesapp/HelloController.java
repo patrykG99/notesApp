@@ -19,6 +19,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import patryk.notesapp.model.Data;
 import patryk.notesapp.model.Note;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class HelloController {
@@ -53,6 +56,14 @@ public class HelloController {
     private VBox categoryBox;
     @FXML
     private ScrollPane categoryScroll;
+    @FXML
+    private Button exitButton;
+    @FXML
+    private AnchorPane titleBox;
+    @FXML
+    private Button minimizeButton;
+
+
 
     @FXML
     void addToDoNote(ActionEvent event) {
@@ -150,9 +161,7 @@ public class HelloController {
         trashImageView.setFitHeight(20);
         trashImageView.setFitWidth(20);
         deleteButton.setGraphic(trashImageView);
-        deleteButton.setStyle("-fx-background-color: #EF5350; -fx-text-fill: white; -fx-border-color: transparent; -fx-border-radius: 5; -fx-background-radius: 5;");
-        deleteButton.setOnMouseEntered(e -> deleteButton.setStyle("-fx-background-color: #00ACC1; -fx-text-fill: white; -fx-border-color: transparent; -fx-border-radius: 5; -fx-background-radius: 5;"));
-        deleteButton.setOnMouseExited(e -> deleteButton.setStyle("-fx-background-color: #00ACC1     ; -fx-text-fill: white; -fx-border-color: transparent; -fx-border-radius: 5; -fx-background-radius: 5;"));
+        deleteButton.getStyleClass().add("deleteNote");
         return deleteButton;
     }
 
@@ -160,7 +169,16 @@ public class HelloController {
 
         Label label = new Label(text);
         label.setOnMouseClicked(e -> {
+            categoryBox.getChildren().forEach(child ->{
+                if(child instanceof Label){
+                    child.getStyleClass().remove("label-selected");
+                    child.getStyleClass().remove("no-hover");
+                }
+            });
             Label clickedLabel = (Label) e.getSource();
+
+            clickedLabel.getStyleClass().addAll("label-selected", "no-hover");
+
             category = clickedLabel.getText();
             toDoBox.getChildren().clear();
             inProgressBox.getChildren().clear();
@@ -179,7 +197,6 @@ public class HelloController {
         categoryBox.getChildren().add(label);
     }
 
-
     @FXML
     void initialize() {
         List<Note> loadedNotes = noteService.readDataFromFile("notes.json").getNotes().stream().filter(e -> e.getCategory().equals(category)).toList();
@@ -194,30 +211,56 @@ public class HelloController {
                 loadLabel(label);
             }
         }
-
         toDoBox.setBorder(new Border(new BorderStroke(Color.web("#34495E"), BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(0, 1, 0, 0))));
-        Image pencilIcon = new Image(getClass().getResourceAsStream("/pencil.png"));
+        categoryScroll.setFitToHeight(true);
+        categoryScroll.setFitToWidth(true);
+        setButtonsGraphic();
+        setupDragAndDrop(toDoBox);
+        setupDragAndDrop(inProgressBox);
+        setupDragAndDrop(doneBox);
+    }
+
+    private void setButtonsGraphic(){
+        Image pencilIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/pencil.png")));
         ImageView pencilImageView = new ImageView(pencilIcon);
         pencilImageView.setFitHeight(20);
         pencilImageView.setFitWidth(20);
         addToDo.setGraphic(pencilImageView);
+        Image iconImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/baseline_close_white_18dp.png")));
+        ImageView exitImage = new ImageView(iconImage);
+        exitImage.setFitHeight(20);
+        exitImage.setFitWidth(20);
+        exitButton.setGraphic(exitImage);
+        Image iconImageMini = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/baseline_minimize_white_18dp.png")));
+        ImageView miniImage = new ImageView(iconImageMini);
+        miniImage.setFitHeight(20);
+        miniImage.setFitWidth(20);
+        minimizeButton.setGraphic(miniImage);
+        exitButton.setOnAction(e ->{
+            Stage s = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            if(s != null)
+                s.close();
+        });
+        exitButton.setMaxHeight(Double.MAX_VALUE);
+        minimizeButton.setOnAction(e ->{
+            Stage s = (Stage) ((Node) e.getSource()).getScene().getWindow();
+            if(s != null){
+                s.setIconified(true);
 
-        categoryScroll.setFitToHeight(true);
-        categoryScroll.setFitToWidth(true);
+            }
 
-
-        setupDragAndDrop(toDoBox);
-        setupDragAndDrop(inProgressBox);
-        setupDragAndDrop(doneBox);
+        });
     }
     private void setupDragAndDrop(VBox box) {
 
         box.setOnDragDetected(event -> {
             Node node = (Node) event.getTarget();
             if (node != null && node.getParent().equals(box)) {
+                node.setStyle("-fx-effect: none;");
                 SnapshotParameters sp = new SnapshotParameters();
+                sp.setFill(Color.TRANSPARENT);
                 WritableImage snapshot = node.snapshot(sp, null);
-                node.setStyle("");
+
                 node.setVisible(false);
                 Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
                 ClipboardContent content = new ClipboardContent();
@@ -261,6 +304,7 @@ public class HelloController {
                 sourceBox.getChildren().remove(noteNode);
                 box.getChildren().add(noteNode);
             }
+            noteNode.setStyle("-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 30, 0.7, 3, 3)");
             noteNode.setVisible(true);
             event.setDropCompleted(true);
             noteService.save(toDoBox, inProgressBox, doneBox, categoryBox,currentData);
