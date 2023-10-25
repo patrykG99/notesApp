@@ -7,10 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -21,6 +18,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Pair;
 import patryk.notesapp.model.Data;
 import patryk.notesapp.model.Note;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +36,8 @@ public class HelloController {
     private final NoteService noteService = new NoteService();
 
     private String category ="default";
+
+    private List<String> selectedCategories = new ArrayList<>();
 
 
 
@@ -63,16 +63,51 @@ public class HelloController {
     @FXML
     private Button minimizeButton;
 
+    private List<String> existingLabels = new ArrayList<>();
+
 
 
     @FXML
     void addToDoNote(ActionEvent event) {
-        TextInputDialog dialog = new TextInputDialog();
+
+
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("New note");
-        dialog.setHeaderText("Insert note:");
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(noteText -> {
+
+
+
+        TextArea noteTextField = new TextArea();
+        noteTextField.setPromptText("Write your note here");
+        ComboBox<String> categoryComboBox = new ComboBox<>();
+        categoryComboBox.setEditable(true);
+        categoryComboBox.getItems().addAll(existingLabels);  // Przykładowe kategorie
+
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(new Label("Note:"), 0, 0);
+        grid.add(noteTextField, 1, 0);
+        grid.add(new Label("Category:"), 0, 1);
+        grid.add(categoryComboBox, 1, 1);
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType buttonTypeOk = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, ButtonType.CANCEL);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == buttonTypeOk) {
+                return new Pair<>(noteTextField.getText(), categoryComboBox.getValue());
+            }
+            return null;
+        });
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+        dialog.getDialogPane().getStyleClass().add("addNoteDialog");
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+        result.ifPresent(noteAndCategory -> {
             try {
+                String noteText = noteAndCategory.getKey();
+                String categoryNote = noteAndCategory.getValue();
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("Note.fxml"));
                 Node noteNode = loader.load();
                 NoteController noteController = loader.getController();
@@ -80,7 +115,7 @@ public class HelloController {
                 Note note = new Note();
                 note.setContent(noteText);
                 note.setStatus("TODO");
-                note.setCategory(category);
+                note.setCategory(categoryNote);
                 noteController.setNote(note);
                 Button deleteButton = createDeleteButton(noteNode, toDoBox);
                 ((AnchorPane) noteNode).getChildren().add(deleteButton);
@@ -169,21 +204,27 @@ public class HelloController {
 
         Label label = new Label(text);
         label.setOnMouseClicked(e -> {
-            categoryBox.getChildren().forEach(child ->{
-                if(child instanceof Label){
-                    child.getStyleClass().remove("label-selected");
-                    child.getStyleClass().remove("no-hover");
-                }
-            });
             Label clickedLabel = (Label) e.getSource();
 
-            clickedLabel.getStyleClass().addAll("label-selected", "no-hover");
+                if(clickedLabel != null && !selectedCategories.contains(clickedLabel.getText())){
+                    selectedCategories.add(clickedLabel.getText());
+
+
+                    clickedLabel.getStyleClass().addAll("label-selected", "no-hover");
+                }
+                else if(clickedLabel != null){
+                    selectedCategories.remove(clickedLabel.getText());
+                    clickedLabel.getStyleClass().removeAll("label-selected", "no-hover");
+                }
+
+
+
 
             category = clickedLabel.getText();
             toDoBox.getChildren().clear();
             inProgressBox.getChildren().clear();
             doneBox.getChildren().clear();
-            List<Note> loadedNotes = noteService.readDataFromFile("notes.json").getNotes().stream().filter(x -> x.getCategory().equals(category)).toList();
+            List<Note> loadedNotes = noteService.readDataFromFile("notes.json").getNotes().stream().filter(x -> selectedCategories.contains(x.getCategory())).toList();
             for (Note note : loadedNotes) {
                 addNoteToBoard(note);
             }
@@ -207,6 +248,7 @@ public class HelloController {
             }
         }
         if(!labels.isEmpty()){
+            existingLabels = labels;
             for(String label : labels){
                 loadLabel(label);
             }

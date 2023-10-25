@@ -184,3 +184,38 @@
     -fx-border-style: solid;
     -fx-font-family: 'Playpen Sans', cursive;
 }
+.buttonToDo{
+    -fx-background-color: transparent;
+}
+.buttonToDo:hover{
+    -fx-background-color:#3498DB;
+}
+.addNoteDialog{
+    -fx-background-color:#213255 ;
+    -fx-text-fill: white;
+}
+.addNoteDialog .text-area{
+    -fx-text-fill: white;
+}
+
+.addNoteDialog .text-area .content{
+    -fx-background-color: #2980B9;
+    -fx-text-fill: white;
+
+}
+.addNoteDialog .label{
+    -fx-text-fill: white;
+}
+.addNoteDialog .combo-box .text-field {
+    -fx-background-color: #2980B9;
+    -fx-text-fill: white;
+}
+.addNoteDialog .list-cell{
+    -fx-background-color: #2980B9;
+    -fx-text-fill: white;
+
+}
+.addNoteDialog .combo-box .arrow{
+    -fx-background-color:#213255 ;
+
+}
