@@ -63,7 +63,12 @@ public class HelloController {
     @FXML
     private Button minimizeButton;
 
+    @FXML
+    private CheckBox showAllCheck;
     private List<String> existingLabels = new ArrayList<>();
+
+    private List<Note> notesToShow = new ArrayList<>();
+    private List<Note> allNotes = new ArrayList<>();
 
 
 
@@ -126,6 +131,7 @@ public class HelloController {
                     currentData = new Data(new ArrayList<>(), new ArrayList<>());
                 }
                 noteService.save(toDoBox, inProgressBox, doneBox, categoryBox,currentData);
+                allNotes.add(note);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -191,7 +197,7 @@ public class HelloController {
 
             noteService.save(toDoBox, inProgressBox, doneBox, categoryBox,currentData);
         });
-        Image trashImage = new Image(getClass().getResourceAsStream("/trashcan.png"));
+        Image trashImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/trashcan.png")));
         ImageView trashImageView = new ImageView(trashImage);
         trashImageView.setFitHeight(20);
         trashImageView.setFitWidth(20);
@@ -220,15 +226,10 @@ public class HelloController {
 
 
 
-            category = clickedLabel.getText();
             toDoBox.getChildren().clear();
             inProgressBox.getChildren().clear();
             doneBox.getChildren().clear();
-            List<Note> loadedNotes = noteService.readDataFromFile("notes.json").getNotes().stream().filter(x -> selectedCategories.contains(x.getCategory())).toList();
-            for (Note note : loadedNotes) {
-                addNoteToBoard(note);
-            }
-            System.out.println(category);
+            showNotes(null);
         });
         label.setMaxWidth(200);
         label.setMaxHeight(150);
@@ -240,13 +241,9 @@ public class HelloController {
 
     @FXML
     void initialize() {
-        List<Note> loadedNotes = noteService.readDataFromFile("notes.json").getNotes().stream().filter(e -> e.getCategory().equals(category)).toList();
+        allNotes = noteService.readDataFromFile("notes.json").getNotes();
         List<String> labels = noteService.readDataFromFile("notes.json").getLabels();
-        if(!loadedNotes.isEmpty()){
-            for (Note note : loadedNotes) {
-                addNoteToBoard(note);
-            }
-        }
+
         if(!labels.isEmpty()){
             existingLabels = labels;
             for(String label : labels){
@@ -293,6 +290,34 @@ public class HelloController {
 
         });
     }
+
+
+    @FXML
+    void showNotes(ActionEvent event) {
+        if(showAllCheck.isSelected()){
+            toDoBox.getChildren().clear();
+            inProgressBox.getChildren().clear();
+            doneBox.getChildren().clear();
+            notesToShow = allNotes;
+            System.out.println("selected");
+
+        }
+        else if(!showAllCheck.isSelected()){
+            toDoBox.getChildren().clear();
+            inProgressBox.getChildren().clear();
+            doneBox.getChildren().clear();
+            notesToShow = allNotes.stream().filter(x -> selectedCategories.contains(x.getCategory())).toList();
+            System.out.println("not");
+
+        }
+        for (Note note : notesToShow) {
+            addNoteToBoard(note);
+        }
+    }
+
+
+
+
     private void setupDragAndDrop(VBox box) {
 
         box.setOnDragDetected(event -> {

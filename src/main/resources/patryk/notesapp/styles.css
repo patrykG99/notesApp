@@ -215,7 +215,14 @@
     -fx-text-fill: white;
 
 }
-.addNoteDialog .combo-box .arrow{
-    -fx-background-color:#213255 ;
+
+.allCheck{
+    -fx-text-fill: white;
+}
+.allCheck:selected .box {
+    -fx-background-color: #2980B9;
+}
+
+.allCheck .box {
 
 }

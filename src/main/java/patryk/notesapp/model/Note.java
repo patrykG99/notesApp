@@ -32,12 +32,10 @@ public class Note {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true; // jeśli dokładnie ten sam obiekt
-        if (o == null || getClass() != o.getClass()) return false; // jeśli null lub inna klasa
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        Note note = (Note) o; // rzutujesz obiekt na Note
-
-        // porównujesz tylko content oraz category
+        Note note = (Note) o;
         if (!content.equals(note.content)) return false;
         return category.equals(note.category);
     }
