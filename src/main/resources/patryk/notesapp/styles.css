@@ -4,6 +4,7 @@
 
 
 
+
 .tableBox {
 
 
@@ -26,6 +27,9 @@
     -fx-font-family: 'Playpen Sans';
     -fx-border-width: 0.5;
     -fx-border-color: black;
+-fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+
 
 
 

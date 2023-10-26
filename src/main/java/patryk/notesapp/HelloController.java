@@ -333,8 +333,8 @@ public class HelloController {
                 ClipboardContent content = new ClipboardContent();
                 content.putString("Note");
                 db.setDragView(snapshot);
-                db.setDragViewOffsetX(event.getX());
-                db.setDragViewOffsetY(event.getY());
+                db.setDragViewOffsetX(event.getX()-20);
+                db.setDragViewOffsetY(event.getY()-node.getLayoutY());
                 db.setContent(content);
                 event.consume();
             }
