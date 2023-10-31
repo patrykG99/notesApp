@@ -17,6 +17,9 @@ import java.util.List;
 
 public class NoteService {
 
+    private String dataPath = System.getProperty("user.home") + "\\notes.json";
+
+
     public void saveDataToFile(List<Note> notes, List<String> labels, String filePath) {
         ObjectMapper mapper = new ObjectMapper();
         Data data = new Data(notes, labels);
@@ -47,7 +50,7 @@ public class NoteService {
          currentData.setLabels(new ArrayList<>(new HashSet<>(currentData.getLabels())));
 
         // Zapisz zaktualizowane dane do pliku
-        saveDataToFile(currentData.getNotes(), currentData.getLabels(), "notes.json");
+        saveDataToFile(currentData.getNotes(), currentData.getLabels(), dataPath);
     }
 
     private List<Note> getNotesFromColumn(VBox column) {

@@ -36,6 +36,7 @@ public class HelloController {
     private final NoteService noteService = new NoteService();
 
     private String category ="default";
+    private String dataPath = System.getProperty("user.home") + "\\notes.json";
 
     private List<String> selectedCategories = new ArrayList<>();
 
@@ -126,7 +127,7 @@ public class HelloController {
                 ((AnchorPane) noteNode).getChildren().add(deleteButton);
                 VBox.setMargin(noteNode, new Insets(0,0,10,0));
                 toDoBox.getChildren().add(noteNode);
-                Data currentData = noteService.readDataFromFile("notes.json");
+                Data currentData = noteService.readDataFromFile(dataPath);
                 if (currentData == null) {
                     currentData = new Data(new ArrayList<>(), new ArrayList<>());
                 }
@@ -189,7 +190,7 @@ public class HelloController {
             Note note = noteController.getNote();
             System.out.println("Usuwanie notatki...");
             container.getChildren().remove(noteNode);
-            Data currentData = noteService.readDataFromFile("notes.json");
+            Data currentData = noteService.readDataFromFile(dataPath);
             if (currentData == null) {
                 currentData = new Data(new ArrayList<>(), new ArrayList<>());
             }
@@ -241,8 +242,8 @@ public class HelloController {
 
     @FXML
     void initialize() {
-        allNotes = noteService.readDataFromFile("notes.json").getNotes();
-        List<String> labels = noteService.readDataFromFile("notes.json").getLabels();
+        allNotes = noteService.readDataFromFile(dataPath).getNotes();
+        List<String> labels = noteService.readDataFromFile(dataPath).getLabels();
 
         if(!labels.isEmpty()){
             existingLabels = labels;
@@ -349,7 +350,7 @@ public class HelloController {
             Node noteNode = (Node) event.getGestureSource();
             NoteController noteController = (NoteController) noteNode.getUserData();
             Note note = noteController.getNote();
-            Data currentData = noteService.readDataFromFile("notes.json");
+            Data currentData = noteService.readDataFromFile(dataPath);
             if (currentData == null) {
                 currentData = new Data(new ArrayList<>(), new ArrayList<>());
             }
