@@ -71,6 +71,9 @@ public class HelloController {
     private List<Note> notesToShow = new ArrayList<>();
     private List<Note> allNotes = new ArrayList<>();
 
+    private double xOffset = 0;
+    private double yOffset = 0;
+
 
 
     @FXML
@@ -258,6 +261,17 @@ public class HelloController {
         setupDragAndDrop(toDoBox);
         setupDragAndDrop(inProgressBox);
         setupDragAndDrop(doneBox);
+
+        titleBox.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        titleBox.setOnMouseDragged(event -> {
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
+        });
     }
 
     private void setButtonsGraphic(){
@@ -385,6 +399,5 @@ public class HelloController {
             }
         });
     }
-
 
 }
