@@ -198,7 +198,7 @@ public class HelloController {
                 currentData = new Data(new ArrayList<>(), new ArrayList<>());
             }
             currentData.getNotes().removeIf(existingNote -> existingNote.equals(note));
-
+            allNotes.remove(note);
             noteService.save(toDoBox, inProgressBox, doneBox, categoryBox,currentData);
         });
         Image trashImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/trashcan.png")));
@@ -211,8 +211,26 @@ public class HelloController {
     }
 
     private void loadLabel(String text) {
+        VBox categoryContainer = new VBox();
 
         Label label = new Label(text);
+        Button deleteCategory = new Button();
+
+        deleteCategory.setOnAction(e -> {
+            Dialog dialog = new Dialog();
+            dialog.setHeaderText("Are you sure you want to remove this category with all its notes?");
+            ButtonType buttonTypeOk = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+
+            dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, ButtonType.CANCEL);
+            Optional<ButtonType> result = dialog.showAndWait();
+            result.ifPresent(buttonType -> {
+                if(buttonType == buttonTypeOk){
+                    allNotes = allNotes.stream().filter(note -> !Objects.equals(note.getCategory(), text)).toList();
+                    existingLabels.remove(text);
+                    ((VBox) categoryContainer.getParent()).getChildren().remove(categoryContainer);
+                }
+            });
+        });
         label.setOnMouseClicked(e -> {
             Label clickedLabel = (Label) e.getSource();
 
@@ -220,11 +238,12 @@ public class HelloController {
                     selectedCategories.add(clickedLabel.getText());
 
 
-                    clickedLabel.getStyleClass().addAll("label-selected", "no-hover");
+
+                    clickedLabel.getParent().getStyleClass().addAll("label-selected", "no-hover");
                 }
                 else if(clickedLabel != null){
                     selectedCategories.remove(clickedLabel.getText());
-                    clickedLabel.getStyleClass().removeAll("label-selected", "no-hover");
+                    clickedLabel.getParent().getStyleClass().removeAll("label-selected", "no-hover");
                 }
 
 
@@ -239,8 +258,10 @@ public class HelloController {
         label.setMaxHeight(150);
         label.setMinHeight(100);
 
-        label.getStyleClass().add("category-label");
-        categoryBox.getChildren().add(label);
+        categoryContainer.getStyleClass().add("category-label");
+        categoryContainer.getChildren().add(label);
+        categoryContainer.getChildren().add(deleteCategory);
+        categoryBox.getChildren().add(categoryContainer);
     }
 
     @FXML
