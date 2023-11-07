@@ -149,6 +149,7 @@ public class HelloController {
         dialog.setHeaderText("Insert category name:");
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(this::loadLabel);
+
     }
 
 
@@ -227,7 +228,16 @@ public class HelloController {
                 if(buttonType == buttonTypeOk){
                     allNotes = allNotes.stream().filter(note -> !Objects.equals(note.getCategory(), text)).toList();
                     existingLabels.remove(text);
+
                     ((VBox) categoryContainer.getParent()).getChildren().remove(categoryContainer);
+                    Data currentData = noteService.readDataFromFile(dataPath);
+                    if (currentData == null) {
+                        currentData = new Data(new ArrayList<>(), new ArrayList<>());
+                    }
+                    currentData.getNotes().removeIf(existingNote -> Objects.equals(existingNote.getCategory(), text));
+                    currentData.getLabels().removeIf(existingLabel -> Objects.equals(existingLabel, text));
+
+                    noteService.save(toDoBox, inProgressBox, doneBox, categoryBox,currentData);
                 }
             });
         });
@@ -262,6 +272,11 @@ public class HelloController {
         categoryContainer.getChildren().add(label);
         categoryContainer.getChildren().add(deleteCategory);
         categoryBox.getChildren().add(categoryContainer);
+        Data currentData = noteService.readDataFromFile(dataPath);
+        if (currentData == null) {
+            currentData = new Data(new ArrayList<>(), new ArrayList<>());
+        }
+        noteService.save(toDoBox, inProgressBox, doneBox, categoryBox,currentData);
     }
 
     @FXML

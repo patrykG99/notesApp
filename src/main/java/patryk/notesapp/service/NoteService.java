@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class NoteService {
 
@@ -31,25 +32,22 @@ public class NoteService {
     }
 
     public void save(VBox toDoBox, VBox inProgressBox, VBox doneBox, VBox categories, Data currentData) {
-        // Wczytuj wszystkie notatki i etykiety z VBox'ów
         List<Note> notesFromToDoBox = getNotesFromColumn(toDoBox);
         List<Note> notesFromInProgressBox = getNotesFromColumn(inProgressBox);
         List<Note> notesFromDoneBox = getNotesFromColumn(doneBox);
         List<String> labelsFromCategories = getLabelsFromBox(categories);
-
-        // Dodaj wczytane notatki do obecnych notatek w currentData
+        System.out.println("saved");
         currentData.getNotes().addAll(notesFromToDoBox);
         currentData.getNotes().addAll(notesFromInProgressBox);
         currentData.getNotes().addAll(notesFromDoneBox);
 
-        // Dodaj wczytane etykiety do obecnych etykiet w currentData
         currentData.getLabels().addAll(labelsFromCategories);
 
 
          currentData.setNotes(new ArrayList<>(new HashSet<>(currentData.getNotes())));
          currentData.setLabels(new ArrayList<>(new HashSet<>(currentData.getLabels())));
 
-        // Zapisz zaktualizowane dane do pliku
+
         saveDataToFile(currentData.getNotes(), currentData.getLabels(), dataPath);
     }
 
@@ -62,13 +60,13 @@ public class NoteService {
         return notes;
     }
     private List<String> getLabelsFromBox(VBox column){
-        List<String> labels = new ArrayList<>();
-        for (Node node : column.getChildren()) {
-            if (node instanceof Label label) {
-                labels.add(label.getText());
-            }
-        }
-        return labels;
+        return column.getChildren().stream()
+                .filter(node -> node instanceof VBox)
+                .map(vbox -> (VBox) vbox)
+                .filter(vbox -> !vbox.getChildren().isEmpty() && vbox.getChildren().get(0) instanceof Label)
+                .map(vbox -> (Label) vbox.getChildren().get(0))
+                .map(Label::getText)
+                .collect(Collectors.toList());
     }
 
 
