@@ -63,8 +63,8 @@ public class NoteService {
         return column.getChildren().stream()
                 .filter(node -> node instanceof VBox)
                 .map(vbox -> (VBox) vbox)
-                .filter(vbox -> !vbox.getChildren().isEmpty() && vbox.getChildren().get(0) instanceof Label)
-                .map(vbox -> (Label) vbox.getChildren().get(0))
+                .filter(vbox -> !vbox.getChildren().isEmpty() && vbox.getChildren().get(1) instanceof Label)
+                .map(vbox -> (Label) vbox.getChildren().get(1))
                 .map(Label::getText)
                 .collect(Collectors.toList());
     }
@@ -75,7 +75,7 @@ public class NoteService {
         try {
             return mapper.readValue(new File(filePath), Data.class);
         } catch (IOException e) {
-            e.printStackTrace();  // Wydrukuj stos wywołań, aby dowiedzieć się więcej o błędzie
+            e.printStackTrace();
             System.out.println("Problem z odczytem danych z pliku: " + filePath);
             return new Data(new ArrayList<>(), new ArrayList<>());
         }

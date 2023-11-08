@@ -34,14 +34,8 @@ import java.util.Optional;
 public class HelloController {
 
     private final NoteService noteService = new NoteService();
-
-    private String category ="default";
     private String dataPath = System.getProperty("user.home") + "\\notes.json";
-
     private List<String> selectedCategories = new ArrayList<>();
-
-
-
     @FXML
     private Button addToDo;
     @FXML
@@ -52,7 +46,6 @@ public class HelloController {
     private VBox inProgressBox;
     @FXML
     private Button categoryAdd;
-
     @FXML
     private VBox categoryBox;
     @FXML
@@ -63,35 +56,25 @@ public class HelloController {
     private AnchorPane titleBox;
     @FXML
     private Button minimizeButton;
-
     @FXML
     private CheckBox showAllCheck;
+    @FXML
+    private ScrollPane toDoScroll;
     private List<String> existingLabels = new ArrayList<>();
-
     private List<Note> notesToShow = new ArrayList<>();
     private List<Note> allNotes = new ArrayList<>();
-
     private double xOffset = 0;
     private double yOffset = 0;
 
-
-
     @FXML
     void addToDoNote(ActionEvent event) {
-
-
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("New note");
-
-
-
         TextArea noteTextField = new TextArea();
         noteTextField.setPromptText("Write your note here");
         ComboBox<String> categoryComboBox = new ComboBox<>();
         categoryComboBox.setEditable(true);
         categoryComboBox.getItems().addAll(existingLabels);  // Przykładowe kategorie
-
-
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -128,7 +111,7 @@ public class HelloController {
                 noteController.setNote(note);
                 Button deleteButton = createDeleteButton(noteNode, toDoBox);
                 ((AnchorPane) noteNode).getChildren().add(deleteButton);
-                VBox.setMargin(noteNode, new Insets(0,0,10,0));
+
                 toDoBox.getChildren().add(noteNode);
                 Data currentData = noteService.readDataFromFile(dataPath);
                 if (currentData == null) {
@@ -141,19 +124,22 @@ public class HelloController {
             }
         });
     }
-
     @FXML
     void addCategory(ActionEvent event) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("New category");
         dialog.setHeaderText("Insert category name:");
+        dialog.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 20) {
+                String truncated = newValue.substring(0, 20);
+                dialog.getEditor().setText(truncated);
+            }
+        });
+
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(this::loadLabel);
 
     }
-
-
-
     private void addNoteToBoard(Note note) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Note.fxml"));
@@ -186,7 +172,6 @@ public class HelloController {
             e.printStackTrace();
         }
     }
-
     private Button createDeleteButton(Node noteNode, VBox container) {
         Button deleteButton = new Button();
         deleteButton.setOnAction(e -> {
@@ -210,13 +195,10 @@ public class HelloController {
         deleteButton.getStyleClass().add("deleteNote");
         return deleteButton;
     }
-
     private void loadLabel(String text) {
         VBox categoryContainer = new VBox();
-
         Label label = new Label(text);
         Button deleteCategory = new Button();
-
         deleteCategory.setOnAction(e -> {
             Dialog dialog = new Dialog();
             dialog.setHeaderText("Are you sure you want to remove this category with all its notes?");
@@ -241,36 +223,42 @@ public class HelloController {
                 }
             });
         });
-        label.setOnMouseClicked(e -> {
-            Label clickedLabel = (Label) e.getSource();
+        categoryContainer.setOnMouseClicked(e -> {
+            Label clickedLabel = (Label) categoryContainer.getChildren().get(1);
 
                 if(clickedLabel != null && !selectedCategories.contains(clickedLabel.getText())){
                     selectedCategories.add(clickedLabel.getText());
-
-
-
                     clickedLabel.getParent().getStyleClass().addAll("label-selected", "no-hover");
                 }
                 else if(clickedLabel != null){
                     selectedCategories.remove(clickedLabel.getText());
                     clickedLabel.getParent().getStyleClass().removeAll("label-selected", "no-hover");
                 }
-
-
-
-
             toDoBox.getChildren().clear();
             inProgressBox.getChildren().clear();
             doneBox.getChildren().clear();
             showNotes(null);
         });
-        label.setMaxWidth(200);
+        label.setMaxWidth(180);
         label.setMaxHeight(150);
         label.setMinHeight(100);
-
+        Image trashImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/outline_delete_white_24dp.png")));
+        ImageView trashImageView = new ImageView(trashImage);
+        trashImageView.setFitHeight(20);
+        trashImageView.setFitWidth(20);
+        VBox.setMargin(deleteCategory, new Insets(0, 0, 0, 0));
+        deleteCategory.setPrefHeight(20);
+        deleteCategory.setPrefWidth(20);
+        deleteCategory.setMinHeight(Button.USE_PREF_SIZE);
+        deleteCategory.setMinWidth(Button.USE_PREF_SIZE);
+        deleteCategory.setTranslateX(-10);
+        deleteCategory.setGraphic(trashImageView);
+        deleteCategory.getStyleClass().add("deleteCategoryButton");
         categoryContainer.getStyleClass().add("category-label");
-        categoryContainer.getChildren().add(label);
+        label.setStyle("-fx-text-fill: white");
         categoryContainer.getChildren().add(deleteCategory);
+        categoryContainer.getChildren().add(label);
+
         categoryBox.getChildren().add(categoryContainer);
         Data currentData = noteService.readDataFromFile(dataPath);
         if (currentData == null) {
@@ -290,9 +278,11 @@ public class HelloController {
                 loadLabel(label);
             }
         }
-        toDoBox.setBorder(new Border(new BorderStroke(Color.web("#34495E"), BorderStrokeStyle.SOLID, new CornerRadii(0), new BorderWidths(0, 1, 0, 0))));
+
         categoryScroll.setFitToHeight(true);
         categoryScroll.setFitToWidth(true);
+
+        toDoScroll.setFitToWidth(true);
         setButtonsGraphic();
         setupDragAndDrop(toDoBox);
         setupDragAndDrop(inProgressBox);
@@ -342,7 +332,6 @@ public class HelloController {
         });
     }
 
-
     @FXML
     void showNotes(ActionEvent event) {
         if(showAllCheck.isSelected()){
@@ -365,12 +354,7 @@ public class HelloController {
             addNoteToBoard(note);
         }
     }
-
-
-
-
     private void setupDragAndDrop(VBox box) {
-
         box.setOnDragDetected(event -> {
             Node node = (Node) event.getTarget();
             if (node != null && node.getParent().equals(box)) {
@@ -435,5 +419,4 @@ public class HelloController {
             }
         });
     }
-
 }

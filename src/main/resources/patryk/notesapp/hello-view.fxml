@@ -49,27 +49,63 @@
             <Insets bottom="5.0" left="100.0" right="100.0" top="10.0" />
          </GridPane.margin>
       </Label>
-      <VBox fx:id="toDoBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="1" GridPane.rowIndex="2">
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
+      <VBox prefHeight="200.0" prefWidth="100.0" styleClass="categoryBox" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
-         </GridPane.margin></VBox>
-      <VBox fx:id="inProgressBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="2" GridPane.rowIndex="2">
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
+         </GridPane.margin>
+         <children>
+            <ScrollPane fx:id="toDoScroll" hbarPolicy="NEVER" prefHeight="554.0" prefWidth="323.0" styleClass="scrollPane">
+               <content>
+                  <VBox fx:id="toDoBox" prefHeight="534.0" prefWidth="325.0">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </ScrollPane>
+         </children></VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" styleClass="categoryBox" GridPane.columnIndex="2" GridPane.rowIndex="2">
          <GridPane.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
-         </GridPane.margin></VBox>
-      <VBox fx:id="doneBox" prefHeight="200.0" prefWidth="100.0" styleClass="tableBox" GridPane.columnIndex="3" GridPane.rowIndex="2">
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
+         </GridPane.margin>
+         <children>
+            <ScrollPane hbarPolicy="NEVER" prefHeight="554.0" prefWidth="323.0" styleClass="scrollPane">
+               <content>
+                  <VBox fx:id="inProgressBox" prefHeight="534.0" prefWidth="323.0">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </ScrollPane>
+         </children></VBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" styleClass="categoryBox" GridPane.columnIndex="3" GridPane.rowIndex="2">
          <GridPane.margin>
-            <Insets bottom="5.0" left="5.0" right="10.0" top="10.0" />
-         </GridPane.margin></VBox>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+         </GridPane.margin>
+         <children>
+            <ScrollPane hbarPolicy="NEVER" prefHeight="554.0" prefWidth="323.0" styleClass="scrollPane">
+               <content>
+                  <VBox fx:id="doneBox" prefHeight="534.0" prefWidth="323.0">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </ScrollPane>
+         </children></VBox>
       <Button fx:id="addToDo" mnemonicParsing="false" onAction="#addToDoNote" styleClass="buttonToDo" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <opaqueInsets>
             <Insets />
