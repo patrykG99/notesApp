@@ -1,6 +1,5 @@
 package patryk.notesapp.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -17,9 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class NoteService {
-
-    private String dataPath = System.getProperty("user.home") + "\\notes.json";
-
+    private final String dataPath = System.getProperty("user.home") + "\\notes.json";
 
     public void saveDataToFile(List<Note> notes, List<String> labels, String filePath) {
         ObjectMapper mapper = new ObjectMapper();
@@ -36,18 +33,12 @@ public class NoteService {
         List<Note> notesFromInProgressBox = getNotesFromColumn(inProgressBox);
         List<Note> notesFromDoneBox = getNotesFromColumn(doneBox);
         List<String> labelsFromCategories = getLabelsFromBox(categories);
-        System.out.println("saved");
         currentData.getNotes().addAll(notesFromToDoBox);
         currentData.getNotes().addAll(notesFromInProgressBox);
         currentData.getNotes().addAll(notesFromDoneBox);
-
         currentData.getLabels().addAll(labelsFromCategories);
-
-
-         currentData.setNotes(new ArrayList<>(new HashSet<>(currentData.getNotes())));
-         currentData.setLabels(new ArrayList<>(new HashSet<>(currentData.getLabels())));
-
-
+        currentData.setNotes(new ArrayList<>(new HashSet<>(currentData.getNotes())));
+        currentData.setLabels(new ArrayList<>(new HashSet<>(currentData.getLabels())));
         saveDataToFile(currentData.getNotes(), currentData.getLabels(), dataPath);
     }
 
@@ -59,7 +50,8 @@ public class NoteService {
         }
         return notes;
     }
-    private List<String> getLabelsFromBox(VBox column){
+
+    private List<String> getLabelsFromBox(VBox column) {
         return column.getChildren().stream()
                 .filter(node -> node instanceof VBox)
                 .map(vbox -> (VBox) vbox)

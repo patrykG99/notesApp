@@ -2,6 +2,7 @@ module patryk.notesapp {
     requires javafx.controls;
     requires javafx.fxml;
     requires com.fasterxml.jackson.databind;
+    requires java.logging;
 
 
     opens patryk.notesapp to javafx.fxml;
