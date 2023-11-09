@@ -1,7 +1,8 @@
-package patryk.notesapp;
+package patryk.notesapp.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
@@ -14,6 +15,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import patryk.notesapp.model.Data;
@@ -27,8 +29,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class HelloController {
-    private static final Logger LOGGER = Logger.getLogger(HelloController.class.getName());
+public class MainController {
+    private static final Logger LOGGER = Logger.getLogger(MainController.class.getName());
+    private static final String NOTE_FXML = "/patryk/notesapp/Note.fxml";
     private final NoteService noteService = new NoteService();
     private final String dataPath = System.getProperty("user.home") + "\\notes.json";
     private final List<String> selectedCategories = new ArrayList<>();
@@ -52,8 +55,6 @@ public class HelloController {
     private Button minimizeButton;
     @FXML
     private CheckBox showAllCheck;
-    @FXML
-    private ScrollPane toDoScroll;
     private List<String> existingLabels = new ArrayList<>();
     private List<Note> notesToShow = new ArrayList<>();
     private List<Note> allNotes = new ArrayList<>();
@@ -68,7 +69,7 @@ public class HelloController {
         noteTextField.setPromptText("Write your note here");
         ComboBox<String> categoryComboBox = new ComboBox<>();
         categoryComboBox.setEditable(true);
-        categoryComboBox.getItems().addAll(existingLabels);  // Przykładowe kategorie
+        categoryComboBox.getItems().addAll(existingLabels);
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -85,14 +86,14 @@ public class HelloController {
             }
             return null;
         });
-        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+        dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/patryk/notesapp/styles.css")).toExternalForm());
         dialog.getDialogPane().getStyleClass().add("addNoteDialog");
         Optional<Pair<String, String>> result = dialog.showAndWait();
         result.ifPresent(noteAndCategory -> {
             try {
                 String noteText = noteAndCategory.getKey();
                 String categoryNote = noteAndCategory.getValue();
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("Note.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(NOTE_FXML));
                 Node noteNode = loader.load();
                 NoteController noteController = loader.getController();
                 noteNode.setUserData(noteController);
@@ -140,33 +141,21 @@ public class HelloController {
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(this::loadLabel);
     }
-
     private void addNoteToBoard(Note note) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Note.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(NOTE_FXML));
             Node noteNode = loader.load();
             NoteController noteController = loader.getController();
             noteNode.setUserData(noteController);
             noteController.setNote(note);
-            Button deleteButton;
-            switch (note.getStatus()) {
-                case "TODO":
-                    deleteButton = createDeleteButton(noteNode, toDoBox);
-                    toDoBox.getChildren().add(noteNode);
-                    break;
-                case "IN_PROGRESS":
-                    deleteButton = createDeleteButton(noteNode, inProgressBox);
-                    inProgressBox.getChildren().add(noteNode);
-                    break;
-                case "DONE":
-                    deleteButton = createDeleteButton(noteNode, doneBox);
-                    doneBox.getChildren().add(noteNode);
-                    break;
-                default:
-                    throw new IllegalStateException("Nieznany status notatki: " + note.getStatus());
-            }
-            ((AnchorPane) noteNode).getChildren().add(deleteButton);
 
+            VBox box = switch (note.getStatus()) {
+                case "TODO" -> toDoBox;
+                case "IN_PROGRESS" -> inProgressBox;
+                case "DONE" -> doneBox;
+                default -> throw new IllegalStateException("Nieznany status notatki: " + note.getStatus());
+            };
+            configureNoteAppearance(note, noteNode, box);
             VBox.setMargin(noteNode, new Insets(0, 0, 10, 0));
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Failed to load Note.fxml", e);
@@ -178,7 +167,6 @@ public class HelloController {
         deleteButton.setOnAction(e -> {
             NoteController noteController = (NoteController) noteNode.getUserData();
             Note note = noteController.getNote();
-            System.out.println("Usuwanie notatki...");
             container.getChildren().remove(noteNode);
             Data currentData = noteService.readDataFromFile(dataPath);
             if (currentData == null) {
@@ -195,6 +183,19 @@ public class HelloController {
         deleteButton.setGraphic(trashImageView);
         deleteButton.getStyleClass().add("deleteNote");
         return deleteButton;
+    }
+    private void configureNoteAppearance(Note note, Node noteNode, VBox box) {
+        noteNode.getStyleClass().removeAll("toDoNote", "inProgressNote", "doneNote", "note");
+        Button deleteButton = createDeleteButton(noteNode, box);
+        ((AnchorPane) noteNode).getChildren().add(deleteButton);
+        String statusClass = switch (note.getStatus()) {
+            case "TODO" -> "toDoNote";
+            case "IN_PROGRESS" -> "inProgressNote";
+            case "DONE" -> "doneNote";
+            default -> throw new IllegalStateException("Unknown note status: " + note.getStatus());
+        };
+        noteNode.getStyleClass().addAll("note", statusClass);
+        box.getChildren().add(noteNode);
     }
 
     private void loadLabel(String text) {
@@ -268,10 +269,8 @@ public class HelloController {
                 loadLabel(label);
             }
         }
-
         categoryScroll.setFitToHeight(true);
         categoryScroll.setFitToWidth(true);
-        toDoScroll.setFitToWidth(true);
         setButtonsGraphic();
         setupDragAndDrop(toDoBox);
         setupDragAndDrop(inProgressBox);
@@ -287,7 +286,6 @@ public class HelloController {
             stage.setY(event.getScreenY() - yOffset);
         });
     }
-
     private void setButtonsGraphic() {
         Image pencilIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/pencil.png")));
         ImageView pencilImageView = new ImageView(pencilIcon);
@@ -317,7 +315,6 @@ public class HelloController {
             }
         });
     }
-
     @FXML
     void showNotes() {
         if (showAllCheck.isSelected()) {
@@ -325,25 +322,24 @@ public class HelloController {
             inProgressBox.getChildren().clear();
             doneBox.getChildren().clear();
             notesToShow = allNotes;
-            System.out.println("selected");
-
         } else if (!showAllCheck.isSelected()) {
             toDoBox.getChildren().clear();
             inProgressBox.getChildren().clear();
             doneBox.getChildren().clear();
             notesToShow = allNotes.stream().filter(x -> selectedCategories.contains(x.getCategory())).toList();
-            System.out.println("not");
         }
         for (Note note : notesToShow) {
             addNoteToBoard(note);
         }
     }
-
     private void setupDragAndDrop(VBox box) {
         box.setOnDragDetected(event -> {
             Node node = (Node) event.getTarget();
+            if (node instanceof Text)
+                node = node.getParent();
+
             if (node != null && node.getParent().equals(box)) {
-                node.setStyle("-fx-effect: none;");
+                node.setStyle("-fx-effect: none");
                 SnapshotParameters sp = new SnapshotParameters();
                 sp.setFill(Color.TRANSPARENT);
                 WritableImage snapshot = node.snapshot(sp, null);
@@ -351,10 +347,12 @@ public class HelloController {
                 Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
                 ClipboardContent content = new ClipboardContent();
                 content.putString("Note");
-                db.setDragView(snapshot);
-                db.setDragViewOffsetX(event.getX() - 20);
-                db.setDragViewOffsetY(event.getY() - node.getLayoutY());
                 db.setContent(content);
+                Bounds nodeBounds = node.localToScene(node.getBoundsInLocal());
+                double offsetX = event.getSceneX() - nodeBounds.getMinX();
+                double offsetY = event.getSceneY() - nodeBounds.getMinY();
+                db.setDragView(snapshot, offsetX, offsetY);
+
                 event.consume();
             }
         });
@@ -373,18 +371,15 @@ public class HelloController {
                 currentData = new Data(new ArrayList<>(), new ArrayList<>());
             }
             currentData.getNotes().removeIf(existingNote -> existingNote.equals(note));
-            Button deleteButton = null;
+            noteNode.getStyleClass().removeAll("toDoNote", "inProgressNote", "doneNote");
             if (box == toDoBox) {
-                deleteButton = createDeleteButton(noteNode, toDoBox);
                 note.setStatus("TODO");
             } else if (box == inProgressBox) {
-                deleteButton = createDeleteButton(noteNode, inProgressBox);
                 note.setStatus("IN_PROGRESS");
             } else if (box == doneBox) {
-                deleteButton = createDeleteButton(noteNode, doneBox);
                 note.setStatus("DONE");
             }
-            ((AnchorPane) noteNode).getChildren().add(deleteButton);
+            configureNoteAppearance(note, noteNode, box);
             VBox sourceBox = (VBox) noteNode.getParent();
             if (!sourceBox.equals(box)) {
                 sourceBox.getChildren().remove(noteNode);

@@ -9,17 +9,16 @@ import javafx.stage.StageStyle;
 
 
 import java.io.IOException;
-import java.util.Objects;
 
-public class HelloApplication extends Application {
+public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("hello-view.fxml"));
 
         Scene scene = new Scene(fxmlLoader.load(), 1200, 700);
         scene.setFill(Color.TRANSPARENT);
 
-        stage.setTitle("Hello!");
+        stage.setTitle("Note Organizer");
         stage.setScene(scene);
         stage.setWidth(1200);
         stage.setHeight(700);

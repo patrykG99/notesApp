@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" onDragDetected="#handleDrag" prefHeight="143.0" prefWidth="245.0" styleClass="toDoNote" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="patryk.notesapp.NoteController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" onDragDetected="#handleDrag" prefHeight="143.0" prefWidth="200.0" styleClass="note" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="patryk.notesapp.controller.NoteController">
    <children>
       <Text fx:id="noteContent" layoutX="9.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="JUSTIFY" wrappingWidth="226.13671875" />
    </children>

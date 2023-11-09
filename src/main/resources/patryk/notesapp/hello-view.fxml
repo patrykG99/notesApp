@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="685.0" prefWidth="1200.0" styleClass="mainBox" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="patryk.notesapp.HelloController">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="685.0" prefWidth="1200.0" styleClass="mainBox" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="patryk.notesapp.controller.MainController">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="10.0" prefWidth="5.0" />
       <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" percentWidth="28.0" prefWidth="100.0" />
@@ -54,11 +54,11 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
          </GridPane.margin>
          <children>
-            <ScrollPane fx:id="toDoScroll" hbarPolicy="NEVER" prefHeight="554.0" prefWidth="323.0" styleClass="scrollPane">
+            <ScrollPane hbarPolicy="NEVER" prefHeight="554.0" prefWidth="323.0" styleClass="scrollPane">
                <content>
-                  <VBox fx:id="toDoBox" prefHeight="534.0" prefWidth="325.0">
+                  <VBox fx:id="toDoBox" prefHeight="534.0" prefWidth="325.0" spacing="10.0">
                      <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
                      </padding>
                   </VBox>
                </content>
@@ -77,9 +77,9 @@
          <children>
             <ScrollPane hbarPolicy="NEVER" prefHeight="554.0" prefWidth="323.0" styleClass="scrollPane">
                <content>
-                  <VBox fx:id="inProgressBox" prefHeight="534.0" prefWidth="323.0">
+                  <VBox fx:id="inProgressBox" prefHeight="534.0" prefWidth="323.0" spacing="10.0">
                      <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
                      </padding>
                   </VBox>
                </content>
@@ -95,9 +95,9 @@
          <children>
             <ScrollPane hbarPolicy="NEVER" prefHeight="554.0" prefWidth="323.0" styleClass="scrollPane">
                <content>
-                  <VBox fx:id="doneBox" prefHeight="534.0" prefWidth="323.0">
+                  <VBox fx:id="doneBox" prefHeight="534.0" prefWidth="323.0" spacing="10.0">
                      <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                        <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
                      </padding>
                   </VBox>
                </content>
@@ -116,7 +116,7 @@
       </Button>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" styleClass="categoryBox" GridPane.rowIndex="1" GridPane.rowSpan="2">
          <children>
-            <Button fx:id="categoryAdd" alignment="CENTER" mnemonicParsing="false" onAction="#addCategory" styleClass="addCategoryButton" text="Add Note">
+            <Button fx:id="categoryAdd" alignment="CENTER" mnemonicParsing="false" onAction="#addCategory" styleClass="addCategoryButton" text="New Category">
                <VBox.margin>
                   <Insets bottom="10.0" left="5.0" top="5.0" />
                </VBox.margin>

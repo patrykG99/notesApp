@@ -8,4 +8,6 @@ module patryk.notesapp {
     opens patryk.notesapp to javafx.fxml;
     exports patryk.notesapp;
     exports patryk.notesapp.model to com.fasterxml.jackson.databind;
+    exports patryk.notesapp.controller;
+    opens patryk.notesapp.controller to javafx.fxml;
 }

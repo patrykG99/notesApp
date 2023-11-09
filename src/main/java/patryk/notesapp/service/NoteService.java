@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import patryk.notesapp.NoteController;
+import patryk.notesapp.controller.NoteController;
 import patryk.notesapp.model.Data;
 import patryk.notesapp.model.Note;
 
+import java.util.logging.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 
 public class NoteService {
     private final String dataPath = System.getProperty("user.home") + "\\notes.json";
+    private static final Logger LOGGER = Logger.getLogger(NoteService.class.getName());
+
 
     public void saveDataToFile(List<Note> notes, List<String> labels, String filePath) {
         ObjectMapper mapper = new ObjectMapper();
@@ -68,7 +71,6 @@ public class NoteService {
             return mapper.readValue(new File(filePath), Data.class);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Problem z odczytem danych z pliku: " + filePath);
             return new Data(new ArrayList<>(), new ArrayList<>());
         }
     }

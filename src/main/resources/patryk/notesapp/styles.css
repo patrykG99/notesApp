@@ -50,21 +50,24 @@
 ;
 
 }
-
-.toDoNote {
-
-    -fx-background-color:#eae7ef ;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 15, 0.7, 3, 3);
-    -fx-alignment: CENTER;
+.note{
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 30, 0.7, 3, 3);
     -fx-background-radius: 10px;
     -fx-border-radius: 10px;
     -fx-start-margin: 10px;
-    -fx-translate-y: 0;
-    -fx-transition: -fx-translate-y 1s ease;
 }
-.toDoNote:hover {
-    -fx-translate-y: -5;
+
+.toDoNote {
+    -fx-background-color:#87CEFA  ;
 }
+
+.inProgressNote{
+    -fx-background-color:#F0E68C  ;
+}
+.doneNote{
+    -fx-background-color:#98FB98  ;
+}
+
 .toDoNoteArea{
     -fx-background-color:#42d4f5 ;
 
