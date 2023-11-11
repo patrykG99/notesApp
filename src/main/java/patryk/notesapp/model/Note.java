@@ -15,7 +15,6 @@ public class Note {
         this.id = UUID.randomUUID().toString();
     }
 
-    // Property getters
     public StringProperty contentProperty() {
         return content;
     }
@@ -28,7 +27,6 @@ public class Note {
         return category;
     }
 
-    // Regular getters
     public String getContent() {
         return content.get();
     }
@@ -41,7 +39,6 @@ public class Note {
         return category.get();
     }
 
-    // Regular setters
     public void setContent(String content) {
         this.content.set(content);
     }
@@ -58,7 +55,6 @@ public class Note {
         return id;
     }
 
-    // Equals and hashCode should use the ID for uniqueness
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

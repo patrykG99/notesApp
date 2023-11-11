@@ -105,6 +105,7 @@ public class MainController {
         categoryComboBox.setEditable(true);
         categoryComboBox.getItems().addAll(existingLabels);
         categoryComboBox.setValue(category);
+        categoryComboBox.setEditable(false);
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
