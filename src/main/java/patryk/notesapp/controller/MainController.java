@@ -100,12 +100,11 @@ public class MainController {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle(title);
         TextArea noteTextField = new TextArea();
-        noteTextField.setText(content); // Set the existing content if editing
+        noteTextField.setText(content);
         ComboBox<String> categoryComboBox = new ComboBox<>();
         categoryComboBox.setEditable(true);
         categoryComboBox.getItems().addAll(existingLabels);
-        categoryComboBox.setValue(category); // Set the existing category if editing
-
+        categoryComboBox.setValue(category);
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -148,7 +147,8 @@ public class MainController {
             }
         });
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(this::loadLabel);
+        result.ifPresent(this::addNewLabel);
+
     }
     private void addNoteToBoard(Note note) {
         try {
@@ -198,7 +198,6 @@ public class MainController {
     private Button createEditButton(Node noteNode){
         Button editButton = new Button();
         AnchorPane.setRightAnchor(editButton,0.0);
-
         Image trashImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/pencil.png")));
         ImageView trashImageView = new ImageView(trashImage);
         trashImageView.setFitHeight(20);
@@ -207,13 +206,8 @@ public class MainController {
         editButton.getStyleClass().add("deleteNote");
         NoteController noteController = (NoteController) noteNode.getUserData();
         Note note = noteController.getNote();
-
         editButton.setOnAction(e ->{
-
-
-
             Optional<Pair<String, String>> result = showNoteDialog("Edit note", note.getContent(), note.getCategory());
-
             result.ifPresent(noteAndCategory -> {
                     String noteText = noteAndCategory.getKey();
                     String categoryNote = noteAndCategory.getValue();
@@ -223,13 +217,8 @@ public class MainController {
                 if (currentData == null) {
                     currentData = new Data(new ArrayList<>(), new ArrayList<>());
                 }
-
                 noteService.save(toDoBox, inProgressBox, doneBox, categoryBox, currentData);
-
-
-
             });
-
         });
         return editButton;
     }
@@ -248,8 +237,7 @@ public class MainController {
         noteNode.getStyleClass().addAll("note", statusClass);
         box.getChildren().add(noteNode);
     }
-
-    private void loadLabel(String text) {
+    private void createCategoryUI(String text){
         VBox categoryContainer = new VBox();
         Label label = new Label(text);
         Button deleteCategory = new Button();
@@ -309,16 +297,25 @@ public class MainController {
         categoryContainer.getChildren().add(label);
         saveData(categoryContainer, categoryBox);
     }
+
+    private void initializeCategories(List<String> categories){
+        existingLabels = categories;
+        for (String label : categories) {
+            createCategoryUI(label);
+        }
+    }
+    private void addNewLabel(String text) {
+        if (!existingLabels.contains(text)) {
+            existingLabels.add(text);
+            createCategoryUI(text);
+        }
+    }
     @FXML
     void initialize() {
         allNotes = noteService.readDataFromFile(dataPath).getNotes();
         List<String> labels = noteService.readDataFromFile(dataPath).getLabels();
-
         if (!labels.isEmpty()) {
-            existingLabels = labels;
-            for (String label : labels) {
-                loadLabel(label);
-            }
+            initializeCategories(labels);
         }
         categoryScroll.setFitToHeight(true);
         categoryScroll.setFitToWidth(true);
@@ -330,7 +327,6 @@ public class MainController {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
-
         titleBox.setOnMouseDragged(event -> {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setX(event.getScreenX() - xOffset);
