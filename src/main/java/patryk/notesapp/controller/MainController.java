@@ -63,13 +63,49 @@ public class MainController {
 
     @FXML
     void addToDoNote() {
+        Optional<Pair<String, String>> result = showNoteDialog("New note", "", "");
+        result.ifPresent(noteAndCategory -> {
+            try {
+                String noteText = noteAndCategory.getKey();
+                String categoryNote = noteAndCategory.getValue();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(NOTE_FXML));
+                Node noteNode = loader.load();
+                NoteController noteController = loader.getController();
+                noteNode.setUserData(noteController);
+                Note note = new Note();
+                note.setContent(noteText);
+                note.setStatus("TODO");
+                note.setCategory(categoryNote);
+                noteController.setNote(note);
+                Button deleteButton = createDeleteButton(noteNode, toDoBox);
+                ((AnchorPane) noteNode).getChildren().add(deleteButton);
+                noteNode.getStyleClass().add("toDoNote");
+                saveData(noteNode,toDoBox);
+                allNotes.add(note);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Failed to load Note.fxml", e);
+                showErrorDialog();
+            }
+        });
+    }
+    private void showErrorDialog() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("Operation Failed");
+        alert.setContentText("There was an error performing the operation. Please try again.");
+        alert.showAndWait();
+    }
+
+    private Optional<Pair<String, String>> showNoteDialog(String title, String content, String category) {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("New note");
+        dialog.setTitle(title);
         TextArea noteTextField = new TextArea();
-        noteTextField.setPromptText("Write your note here");
+        noteTextField.setText(content); // Set the existing content if editing
         ComboBox<String> categoryComboBox = new ComboBox<>();
         categoryComboBox.setEditable(true);
         categoryComboBox.getItems().addAll(existingLabels);
+        categoryComboBox.setValue(category); // Set the existing category if editing
+
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -88,38 +124,11 @@ public class MainController {
         });
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/patryk/notesapp/styles.css")).toExternalForm());
         dialog.getDialogPane().getStyleClass().add("addNoteDialog");
-        Optional<Pair<String, String>> result = dialog.showAndWait();
-        result.ifPresent(noteAndCategory -> {
-            try {
-                String noteText = noteAndCategory.getKey();
-                String categoryNote = noteAndCategory.getValue();
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(NOTE_FXML));
-                Node noteNode = loader.load();
-                NoteController noteController = loader.getController();
-                noteNode.setUserData(noteController);
-                Note note = new Note();
-                note.setContent(noteText);
-                note.setStatus("TODO");
-                note.setCategory(categoryNote);
-                noteController.setNote(note);
-                Button deleteButton = createDeleteButton(noteNode, toDoBox);
-                ((AnchorPane) noteNode).getChildren().add(deleteButton);
-                saveData(noteNode,toDoBox);
-                allNotes.add(note);
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "Failed to load Note.fxml", e);
-                showErrorDialog();
-            }
-        });
-    }
-    private void showErrorDialog() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText("Operation Failed");
-        alert.setContentText("There was an error performing the operation. Please try again.");
-        alert.showAndWait();
+
+        return dialog.showAndWait();
     }
     private void saveData(Node element, VBox container){
+
         container.getChildren().add(element);
         Data currentData = noteService.readDataFromFile(dataPath);
         if (currentData == null) {
@@ -164,6 +173,7 @@ public class MainController {
     }
     private Button createDeleteButton(Node noteNode, VBox container) {
         Button deleteButton = new Button();
+        AnchorPane.setLeftAnchor(deleteButton,0.0);
         deleteButton.setOnAction(e -> {
             NoteController noteController = (NoteController) noteNode.getUserData();
             Note note = noteController.getNote();
@@ -184,10 +194,51 @@ public class MainController {
         deleteButton.getStyleClass().add("deleteNote");
         return deleteButton;
     }
+
+    private Button createEditButton(Node noteNode){
+        Button editButton = new Button();
+        AnchorPane.setRightAnchor(editButton,0.0);
+
+        Image trashImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/pencil.png")));
+        ImageView trashImageView = new ImageView(trashImage);
+        trashImageView.setFitHeight(20);
+        trashImageView.setFitWidth(20);
+        editButton.setGraphic(trashImageView);
+        editButton.getStyleClass().add("deleteNote");
+        NoteController noteController = (NoteController) noteNode.getUserData();
+        Note note = noteController.getNote();
+
+        editButton.setOnAction(e ->{
+
+
+
+            Optional<Pair<String, String>> result = showNoteDialog("Edit note", note.getContent(), note.getCategory());
+
+            result.ifPresent(noteAndCategory -> {
+                    String noteText = noteAndCategory.getKey();
+                    String categoryNote = noteAndCategory.getValue();
+                    note.setContent(noteText);
+                    note.setCategory(categoryNote);
+                Data currentData = noteService.readDataFromFile(dataPath);
+                if (currentData == null) {
+                    currentData = new Data(new ArrayList<>(), new ArrayList<>());
+                }
+
+                noteService.save(toDoBox, inProgressBox, doneBox, categoryBox, currentData);
+
+
+
+            });
+
+        });
+        return editButton;
+    }
     private void configureNoteAppearance(Note note, Node noteNode, VBox box) {
         noteNode.getStyleClass().removeAll("toDoNote", "inProgressNote", "doneNote", "note");
         Button deleteButton = createDeleteButton(noteNode, box);
+        Button editButton = createEditButton(noteNode);
         ((AnchorPane) noteNode).getChildren().add(deleteButton);
+        ((AnchorPane) noteNode).getChildren().add(editButton);
         String statusClass = switch (note.getStatus()) {
             case "TODO" -> "toDoNote";
             case "IN_PROGRESS" -> "inProgressNote";

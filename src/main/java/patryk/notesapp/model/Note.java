@@ -1,49 +1,75 @@
 package patryk.notesapp.model;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
+import java.util.UUID;
+
 public class Note {
+    private final String id;
+    private final StringProperty content = new SimpleStringProperty(this, "content", "");
+    private final StringProperty status = new SimpleStringProperty(this, "status", "");
+    private final StringProperty category = new SimpleStringProperty(this, "category", "");
 
-        private String content;
-        private String status;
-        private String category;
+    public Note() {
+        this.id = UUID.randomUUID().toString();
+    }
 
-    public String getContent() {
+    // Property getters
+    public StringProperty contentProperty() {
         return content;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getStatus() {
+    public StringProperty statusProperty() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getCategory() {
+    public StringProperty categoryProperty() {
         return category;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    // Regular getters
+    public String getContent() {
+        return content.get();
     }
 
+    public String getStatus() {
+        return status.get();
+    }
+
+    public String getCategory() {
+        return category.get();
+    }
+
+    // Regular setters
+    public void setContent(String content) {
+        this.content.set(content);
+    }
+
+    public void setStatus(String status) {
+        this.status.set(status);
+    }
+
+    public void setCategory(String category) {
+        this.category.set(category);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    // Equals and hashCode should use the ID for uniqueness
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Note note = (Note) o;
-        if (!content.equals(note.content)) return false;
-        return category.equals(note.category);
+        return id.equals(note.id);
     }
 
     @Override
     public int hashCode() {
-        int result = content.hashCode();
-        result = 31 * result + category.hashCode();
-        return result;
+        return id.hashCode();
     }
 }

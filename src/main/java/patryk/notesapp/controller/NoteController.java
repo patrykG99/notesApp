@@ -2,6 +2,7 @@ package patryk.notesapp.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import patryk.notesapp.model.Note;
@@ -11,12 +12,14 @@ public class NoteController {
 
     @FXML
     private Text noteContent;
+    @FXML
+    private Label categoryLabel;
 
 
 
     @FXML
     void handleDrag(MouseEvent event) {
-        System.out.println("dsada");
+
     }
 
     public void setNoteContent(String text){
@@ -31,7 +34,9 @@ public class NoteController {
 
     public void setNote(Note note) {
         this.note = note;
-        noteContent.setText(note.getContent());
+
+        noteContent.textProperty().bind(note.contentProperty());
+        categoryLabel.textProperty().bind(note.categoryProperty());
     }
 
     public Note getNote() {

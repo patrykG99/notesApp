@@ -32,17 +32,34 @@ public class NoteService {
     }
 
     public void save(VBox toDoBox, VBox inProgressBox, VBox doneBox, VBox categories, Data currentData) {
-        List<Note> notesFromToDoBox = getNotesFromColumn(toDoBox);
-        List<Note> notesFromInProgressBox = getNotesFromColumn(inProgressBox);
-        List<Note> notesFromDoneBox = getNotesFromColumn(doneBox);
+        List<Note> allNotes = new ArrayList<>(); // A list to hold all the notes for saving
+        allNotes.addAll(getNotesFromColumn(toDoBox));
+        allNotes.addAll(getNotesFromColumn(inProgressBox));
+        allNotes.addAll(getNotesFromColumn(doneBox));
         List<String> labelsFromCategories = getLabelsFromBox(categories);
-        currentData.getNotes().addAll(notesFromToDoBox);
-        currentData.getNotes().addAll(notesFromInProgressBox);
-        currentData.getNotes().addAll(notesFromDoneBox);
-        currentData.getLabels().addAll(labelsFromCategories);
-        currentData.setNotes(new ArrayList<>(new HashSet<>(currentData.getNotes())));
-        currentData.setLabels(new ArrayList<>(new HashSet<>(currentData.getLabels())));
+
+        for (Note newNote : allNotes) {
+            Note existingNote = findNoteById(currentData.getNotes(), newNote.getId());
+            if (existingNote != null) {
+                existingNote.setContent(newNote.getContent());
+                existingNote.setCategory(newNote.getCategory());
+            } else {
+                currentData.getNotes().add(newNote);
+            }
+        }
+
+        currentData.setLabels(new ArrayList<>(new HashSet<>(labelsFromCategories)));
+
         saveDataToFile(currentData.getNotes(), currentData.getLabels(), dataPath);
+    }
+
+    private Note findNoteById(List<Note> notes, String id) {
+        for (Note note : notes) {
+            if (note.getId().equals(id)) {
+                return note;
+            }
+        }
+        return null;
     }
 
     private List<Note> getNotesFromColumn(VBox column) {
