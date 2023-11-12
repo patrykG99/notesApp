@@ -193,7 +193,12 @@
     -fx-font-family: 'Playpen Sans', cursive;
 }
 .buttonToDo{
-    -fx-background-color: transparent;
+    -fx-background-color: #4CAF50; /* A nice green for visibility */
+    -fx-text-fill: white; /* White text for contrast */
+    -fx-font-size: 16px; /* Larger font size for readability */
+    -fx-padding: 5px 5px; /* Padding for a larger click area */
+    -fx-background-radius: 20; /* Rounded corners */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 .buttonToDo:hover{
     -fx-background-color:#3498DB;

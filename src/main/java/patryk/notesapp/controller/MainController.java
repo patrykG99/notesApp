@@ -1,5 +1,7 @@
 package patryk.notesapp.controller;
 
+import com.fasterxml.jackson.databind.util.TokenBuffer;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -116,6 +118,16 @@ public class MainController {
         dialog.getDialogPane().setContent(grid);
         ButtonType buttonTypeOk = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, ButtonType.CANCEL);
+        Node buttonNode = dialog.getDialogPane().lookupButton(buttonTypeOk);
+        buttonNode.setDisable(content.trim().isEmpty());
+        noteTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            buttonNode.setDisable(newValue.trim().isEmpty());
+        });
+        buttonNode.addEventFilter(ActionEvent.ACTION, event -> {
+            if(noteTextField.getText().trim().isEmpty()){
+                event.consume();
+            }
+        });
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == buttonTypeOk) {
                 return new Pair<>(noteTextField.getText(), categoryComboBox.getValue());
@@ -141,15 +153,17 @@ public class MainController {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("New category");
         dialog.setHeaderText("Insert category name:");
+        final Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         dialog.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty());
             if (newValue.length() > 20) {
                 String truncated = newValue.substring(0, 20);
                 dialog.getEditor().setText(truncated);
             }
         });
+        okButton.setDisable(true);
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(this::addNewLabel);
-
     }
     private void addNoteToBoard(Note note) {
         try {
@@ -318,6 +332,8 @@ public class MainController {
         if (!labels.isEmpty()) {
             initializeCategories(labels);
         }
+        if(allNotes.isEmpty())
+            allNotes = new ArrayList<>();
         categoryScroll.setFitToHeight(true);
         categoryScroll.setFitToWidth(true);
         setButtonsGraphic();
