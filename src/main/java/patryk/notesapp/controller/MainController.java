@@ -120,8 +120,18 @@ public class MainController {
         dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, ButtonType.CANCEL);
         Node buttonNode = dialog.getDialogPane().lookupButton(buttonTypeOk);
         buttonNode.setDisable(content.trim().isEmpty());
+        Runnable updateOkButtonState = () -> {
+            boolean isTextAreaEmpty = noteTextField.getText().trim().isEmpty();
+            boolean isComboBoxNotSelected = categoryComboBox.getValue() == null ||
+                    categoryComboBox.getValue().trim().isEmpty();
+            buttonNode.setDisable(isTextAreaEmpty || isComboBoxNotSelected);
+        };
         noteTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            buttonNode.setDisable(newValue.trim().isEmpty());
+            updateOkButtonState.run();
+        });
+
+        categoryComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updateOkButtonState.run();
         });
         buttonNode.addEventFilter(ActionEvent.ACTION, event -> {
             if(noteTextField.getText().trim().isEmpty()){
@@ -134,9 +144,9 @@ public class MainController {
             }
             return null;
         });
+        updateOkButtonState.run();
         dialog.getDialogPane().getStylesheets().add(Objects.requireNonNull(getClass().getResource("/patryk/notesapp/styles.css")).toExternalForm());
         dialog.getDialogPane().getStyleClass().add("addNoteDialog");
-
         return dialog.showAndWait();
     }
     private void saveData(Node element, VBox container){
