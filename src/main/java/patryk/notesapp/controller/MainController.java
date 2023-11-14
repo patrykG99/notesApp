@@ -1,6 +1,7 @@
 package patryk.notesapp.controller;
 
 import com.fasterxml.jackson.databind.util.TokenBuffer;
+import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +20,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.util.Pair;
 import patryk.notesapp.model.Data;
 import patryk.notesapp.model.Note;
@@ -57,6 +59,8 @@ public class MainController {
     private Button minimizeButton;
     @FXML
     private CheckBox showAllCheck;
+    @FXML
+    private Button categoryAdd;
     private List<String> existingLabels = new ArrayList<>();
     private List<Note> notesToShow = new ArrayList<>();
     private List<Note> allNotes = new ArrayList<>();
@@ -65,6 +69,8 @@ public class MainController {
 
     @FXML
     void addToDoNote() {
+
+        setupAnimationsClick(addToDo);
         Optional<Pair<String, String>> result = showNoteDialog("New note", "", "");
         result.ifPresent(noteAndCategory -> {
             try {
@@ -160,6 +166,7 @@ public class MainController {
     }
     @FXML
     void addCategory() {
+        setupAnimationsClick(categoryAdd);
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("New category");
         dialog.setHeaderText("Insert category name:");
@@ -173,6 +180,7 @@ public class MainController {
         });
         okButton.setDisable(true);
         Optional<String> result = dialog.showAndWait();
+
         result.ifPresent(this::addNewLabel);
     }
     private void addNoteToBoard(Note note) {
@@ -359,7 +367,20 @@ public class MainController {
             stage.setX(event.getScreenX() - xOffset);
             stage.setY(event.getScreenY() - yOffset);
         });
+
+
+
+
     }
+
+    private void setupAnimationsClick(Node node) {
+        TranslateTransition translateTransition = new TranslateTransition(Duration.millis(200), node);
+        translateTransition.setByY(3);
+        translateTransition.setAutoReverse(true);
+        translateTransition.setCycleCount(2);
+        translateTransition.play();
+    }
+
     private void setButtonsGraphic() {
         Image pencilIcon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/pencil.png")));
         ImageView pencilImageView = new ImageView(pencilIcon);
